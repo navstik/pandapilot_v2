@@ -20,6 +20,8 @@
 #include <string.h>
 #include <stdio.h>
 
+#include <drivers/drv_led.h>
+
 #include <arch/board/board.h>
 
 #include <chip.h>
@@ -31,8 +33,8 @@
 #include <stm32_tim.h>
 
 static int led_toggle(int leds, int led);
-+static int led_on(int leds, int led);
-+static int led_off(int leds, int led);
+static int led_on(int leds, int led);
+static int led_off(int leds, int led);
 
 __EXPORT int  test_led(int argc, char *argv[]);
 
@@ -88,7 +90,7 @@ int test_led(int argc, char *argv[])
      usleep(60000);
     }
  
-printf("\t LED test completed, no errors.\n")
+printf("\t LED test completed, no errors.\n") ;
 return ret;
 }
  
