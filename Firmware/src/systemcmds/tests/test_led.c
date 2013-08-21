@@ -1,134 +1,115 @@
-/****************************************************************************
- * px4/sensors/test_gpio.c
- *
- *  Copyright (C) 2012 PX4 Development Team. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- * 3. Neither the name NuttX nor the names of its contributors may be
- *    used to endorse or promote products derived from this software
- *    without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
- * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
- * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
- * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
- * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
- * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
- * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- *
- ****************************************************************************/
+/*
 
-/****************************************************************************
- * Included Files
- ****************************************************************************/
+ * @file input1.c
+ 
+*/
+
 
 #include <nuttx/config.h>
+#include <nuttx/arch.h>
+#include <nuttx/irq.h>
 
 #include <sys/types.h>
+#include <stdbool.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <errno.h>
+#include <assert.h>
 #include <debug.h>
+#include <time.h>
+#include <queue.h>
+#include <errno.h>
+#include <string.h>
+#include <stdio.h>
 
 #include <arch/board/board.h>
 
-#include <drivers/drv_led.h>
+#include <chip.h>
+#include <up_internal.h>
+#include <up_arch.h>
 
-#include "tests.h"
+#include <stm32.h>
+#include <stm32_gpio.h>
+#include <stm32_tim.h>
 
-/****************************************************************************
- * Pre-processor Definitions
- ****************************************************************************/
+static int led_toggle(int leds, int led);
++static int led_on(int leds, int led);
++static int led_off(int leds, int led);
 
-/****************************************************************************
- * Private Types
- ****************************************************************************/
-
-/****************************************************************************
- * Private Function Prototypes
- ****************************************************************************/
-
-/****************************************************************************
- * Private Data
- ****************************************************************************/
-
-/****************************************************************************
- * Public Data
- ****************************************************************************/
-
-/****************************************************************************
- * Private Functions
- ****************************************************************************/
-
-
-/****************************************************************************
- * Public Functions
- ****************************************************************************/
-
-/****************************************************************************
- * Name: test_led
- ****************************************************************************/
+__EXPORT int  test_led(int argc, char *argv[]);
 
 int test_led(int argc, char *argv[])
-{
-	int		fd;
-	int		ret = 0;
+ {
 
-	fd = open(LED_DEVICE_PATH, 0);
+  int  fd;
+  int  ret = 0;
+ 
+  int leds = open(LED_DEVICE_PATH, 0);
+  if (leds < 0) {
+     printf("\tLED: open fail\n");
+     return ERROR;
+    }
+ 
+  int i ;
+  
+  printf ("\nBOTH LEDs OFF !!\n");
+  led_off(leds, LED_GREEN);
+  led_off(leds, LED_AMBER);
+  usleep (2000000) ;
 
-	if (fd < 0) {
-		printf("\tLED: open fail\n");
-		return ERROR;
-	}
+  printf ("\nGREEN LED ON !!\n");
+  led_on(leds, LED_GREEN);
+  usleep (2000000) ;
 
-	if (ioctl(fd, LED_ON, LED_BLUE) ||
-	    ioctl(fd, LED_ON, LED_AMBER)) {
+  printf ("\nGREEN LED OFF !!\n");
+  led_off(leds, LED_GREEN);
+  usleep (2000000) ;
+        
+  printf ("\nAMBER LED ON !!\n");
+  led_on(leds, LED_AMBER);
+  usleep (2000000) ;
 
-		printf("\tLED: ioctl fail\n");
-		return ERROR;
-	}
+  printf ("\nAMBER LED OFF !!\n");
+  led_off(leds, LED_AMBER);
+  usleep (2000000) ;
+      
+   printf ("\nBOTH LEDs BLINKING !!\n");
 
-	/* let them blink for fun */
-
-	int i;
-	uint8_t ledon = 1;
-
-	for (i = 0; i < 10; i++) {
-		if (ledon) {
-			ioctl(fd, LED_ON, LED_BLUE);
-			ioctl(fd, LED_OFF, LED_AMBER);
-
-		} else {
-			ioctl(fd, LED_OFF, LED_BLUE);
-			ioctl(fd, LED_ON, LED_AMBER);
-		}
-
-		ledon = !ledon;
-		usleep(60000);
-	}
-
-	/* Go back to default */
-	ioctl(fd, LED_ON, LED_BLUE);
-	ioctl(fd, LED_OFF, LED_AMBER);
-
-	printf("\t LED test completed, no errors.\n");
-
-	return ret;
+  char ledon = 1 ;
+  for (i = 0; i < 50; i++) {
+    if (ledon) {
+      ioctl(leds, LED_ON, LED_GREEN);
+      ioctl(leds, LED_OFF, LED_AMBER);
+ 
+     } else {
+      ioctl(leds, LED_OFF, LED_GREEN);
+      ioctl(leds, LED_ON, LED_AMBER);
+     }
+ 
+     ledon = !ledon;
+     usleep(60000);
+    }
+ 
+printf("\t LED test completed, no errors.\n")
+return ret;
 }
+ 
+static int led_toggle(int leds, int led)
+{
+  static int last_green = LED_ON;
+  static int last_amber = LED_ON;
+
+  if (led == LED_GREEN) last_green = (last_green == LED_ON) ? LED_OFF : LED_ON;
+
+  if (led == LED_AMBER) last_amber = (last_amber == LED_ON) ? LED_OFF : LED_ON;
+
+  return ioctl(leds, ((led == LED_GREEN) ? last_green : last_amber), led);
+}
+
+static int led_off(int leds, int led)
+{
+  return ioctl(leds, LED_OFF, led);
+}
+
+static int led_on(int leds, int led)
+{
+  return ioctl(leds, LED_ON, led);
+} 
