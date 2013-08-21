@@ -51,6 +51,7 @@
 #define LED_RED			1	/* some boards have red rather than amber */
 #define LED_BLUE		0
 #define LED_SAFETY		2
+#define LED_GREEN		0	/* NAVSTIK board */ 
 
 #define LED_ON			_IOC(_LED_BASE, 0)
 #define LED_OFF			_IOC(_LED_BASE, 1)

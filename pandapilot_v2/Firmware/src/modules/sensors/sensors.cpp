@@ -116,8 +116,8 @@
 #endif
 
 #ifdef CONFIG_ARCH_BOARD_NAVSTIK_V1
-  #define ADC_BATTERY_VOLTAGE_CHANNEL	11
-  #define ADC_AIRSPEED_VOLTAGE_CHANNEL	10
+ #define ADC_BATTERY_VOLTAGE_CHANNEL	11
+ #define ADC_BATTERY_CURRENT_CHANNEL  	1
 #endif
 
 #ifdef CONFIG_ARCH_BOARD_PX4FMU_V2
@@ -1116,76 +1116,68 @@ Sensors::adc_poll(struct sensor_combined_s &raw)
 		/* make space for a maximum of eight channels */
 		struct adc_msg_s buf_adc[8];
 		/* read all channels available */
-		int ret = read(_fd_adc, &buf_adc, sizeof(buf_adc));
+		int ret = read(_fd_adc, buf_adc, sizeof(buf_adc));
+		
+		unsigned channels = ret / sizeof(buf_adc[0]);
+
+		/* look for battery channel */
 
 		for (unsigned i = 0; i < sizeof(buf_adc) / sizeof(buf_adc[0]); i++) {
-			
-			if (ret >= (int)sizeof(buf_adc[0])) {
 
-				/* Save raw voltage values */
-				if (i < (sizeof(raw.adc_voltage_v)) / sizeof(raw.adc_voltage_v[0])) {
-					 raw.adc_voltage_v[i] = buf_adc[i].am_data / (4096.0f / 3.3f);
-				}
+			if (ret >= sizeof(buf_adc[0]) && ADC_BATTERY_VOLTAGE_CHANNEL == buf_adc[i].am_channel) {
+				/* Voltage in volts */
+				float voltage = (buf_adc[i].am_data * _parameters.battery_voltage_scaling);
+//				printf ("\nVoltage : %.4f",voltage) ;
+				
+				
+				if (voltage > VOLTAGE_BATTERY_IGNORE_THRESHOLD_VOLTS) {
 
-				/* look for specific channels and process the raw voltage to measurement data */
-				if (ADC_BATTERY_VOLTAGE_CHANNEL == buf_adc[i].am_channel) {
-					/* Voltage in volts */
-					float voltage = (buf_adc[i].am_data * _parameters.battery_voltage_scaling);
+					/* one-time initialization of low-pass value to avoid long init delays */
+					if (_battery_status.voltage_v < 3.0f) {
+					
+		_battery_status.voltage_v = voltage;
+					}
 
-					if (voltage > VOLTAGE_BATTERY_IGNORE_THRESHOLD_VOLTS) {
+					_battery_status.timestamp = hrt_absolute_time();
+					_battery_status.voltage_v = (BAT_VOL_LOWPASS_1 * (_battery_status.voltage_v + BAT_VOL_LOWPASS_2 * voltage));;
+		
+					/* announce the battery voltage if needed, just publish else */
+					if (_battery_pub > 0) {
+						orb_publish(ORB_ID(battery_status), _battery_pub, &_battery_status);
 
-						/* one-time initialization of low-pass value to avoid long init delays */
-						if (_battery_status.voltage_v < 3.0f) {
-							_battery_status.voltage_v = voltage;
-						}
-
-						_battery_status.timestamp = hrt_absolute_time();
-						_battery_status.voltage_v = (BAT_VOL_LOWPASS_1 * (_battery_status.voltage_v + BAT_VOL_LOWPASS_2 * voltage));;
-						/* current and discharge are unknown */
-						_battery_status.current_a = -1.0f;
-						_battery_status.discharged_mah = -1.0f;
-
-						/* announce the battery voltage if needed, just publish else */
-						if (_battery_pub > 0) {
-							orb_publish(ORB_ID(battery_status), _battery_pub, &_battery_status);
-
-						} else {
-							_battery_pub = orb_advertise(ORB_ID(battery_status), &_battery_status);
-						}
-					} 
-
-				} else if (ADC_AIRSPEED_VOLTAGE_CHANNEL == buf_adc[i].am_channel) {
-
-					/* calculate airspeed, raw is the difference from */
-					float voltage = (float)(buf_adc[i].am_data ) * 3.3f / 4096.0f * 2.0f; //V_ref/4096 * (voltage divider factor)
-
-					/**
-					 * The voltage divider pulls the signal down, only act on
-					 * a valid voltage from a connected sensor
-					 */
-					if (voltage > 0.4f) {
-
-						float diff_pres_pa = voltage * 1000.0f - _parameters.diff_pres_offset_pa; //for MPXV7002DP sensor
-
-						_diff_pres.timestamp = hrt_absolute_time();
-						_diff_pres.differential_pressure_pa = diff_pres_pa;
-						_diff_pres.voltage = voltage;
-
-						/* announce the airspeed if needed, just publish else */
-						if (_diff_pres_pub > 0) {
-							orb_publish(ORB_ID(differential_pressure), _diff_pres_pub, &_diff_pres);
-
-						} else {
-							_diff_pres_pub = orb_advertise(ORB_ID(differential_pressure), &_diff_pres);
-						}
+					} else {
+						_battery_pub = orb_advertise(ORB_ID(battery_status), &_battery_status);
 					}
 				}
 
 				_last_adc = hrt_absolute_time();
+			//	break;
 			}
+
+		if (ret >= sizeof(buf_adc[0]) && ADC_BATTERY_CURRENT_CHANNEL == buf_adc[i].am_channel) { 
+				/* Voltage in volts */
+				float curr_voltage = (buf_adc[i].am_data * _parameters.battery_voltage_scaling);
+//				printf ("\nVoltage : %.4f",voltage) ;
+				
+					/* current and discharge are unknown */
+					_battery_status.current_a = curr_voltage * 5000 / 200 / 0.051;
+					_battery_status.discharged_mah = -1.0f;
+
+					/* announce the battery voltage if needed, just publish else */
+					if (_battery_pub > 0) {
+						orb_publish(ORB_ID(battery_status), _battery_pub, &_battery_status);
+
+					} else {
+						_battery_pub = orb_advertise(ORB_ID(battery_status), &_battery_status);
+					}
+				}
+
+				_last_adc = hrt_absolute_time();
+			//	break;
+			}
+
 		}
 	}
-}
 
 void
 Sensors::ppm_poll()
