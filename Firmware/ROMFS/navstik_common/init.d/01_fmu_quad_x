@@ -27,8 +27,8 @@ fi
 #
 # Load default params for this platform
 #
-if param compare SYS_AUTOCONFIG 1
-then
+#if param compare SYS_AUTOCONFIG 1
+#then
 	# Set all params here, then disable autoconfig
 	param set MC_ATTRATE_P                0.14
 	param set MC_ATTRATE_I                0
@@ -48,19 +48,19 @@ then
 
 	param set SYS_AUTOCONFIG 0
 	param save /fs/microsd/params
-fi
+#fi
 
 #
 # Force some key parameters to sane values
 # MAV_TYPE     1 = fixed wing, 2 = quadrotor, 13 = hexarotor
 #              see https://pixhawk.ethz.ch/mavlink/
 #
-param set MAV_TYPE 2
+param set MAV_TYPE 1
  
 #
 # Start MAVLink
 #
-mavlink start -d /dev/ttyS0 -b 57600
+mavlink start -d /dev/ttyS2 -b 57600
 usleep 5000
  
 #
@@ -76,7 +76,7 @@ commander start
 #
 # Start GPS interface (depends on orb)
 #
-gps start
+gps start -d /dev/ttyS1 -b 38400
  
 #
 # Start the attitude estimator
