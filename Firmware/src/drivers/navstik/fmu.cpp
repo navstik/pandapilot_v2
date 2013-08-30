@@ -74,6 +74,8 @@
 	#include <systemlib/err.h>
 	#include <systemlib/ppm_decode.h>
 
+	extern volatile uint16_t rc_buffer[PWM_INPUT_CHANNELS] ;
+
 	class NAVSTIK : public device::CDev
 	{
 	public:
@@ -490,7 +492,6 @@
 
 	/* can we mix? */
 	if (_mixers != nullptr) {
-		printf("mixer ");			// tanmay
 
 	/* do mixing */
 	outputs.noutputs = _mixers->mix(&outputs.output[0], num_outputs);
@@ -511,6 +512,7 @@
 	outputs.output[i] <= 1.0f) {
 	/* scale for PWM output 900 - 2100us */
 	outputs.output[i] = 1500 + (600 * outputs.output[i]);
+//	printf ("\n1 : %d : %.4f",i,outputs.output[i]) ;
 	} else {
 	/*
 	* Value is NaN, INF or out of band - set to the minimum value.
@@ -518,8 +520,10 @@
 	* spinning motors. It would be deadly in flight.
 	*/
 	outputs.output[i] = 900;
+//	outputs.output[i] = 1500 + (600 * outputs.output[i]);
+//	printf ("\n2 : %d : %.4f",i,outputs.output[i]) ;
 	}
-
+	
 	/* output to the servo */
 	up_pwm_servo_set(i, outputs.output[i]);
 	}
@@ -544,17 +548,28 @@
 	}
 	}
 
+	#ifdef CONFIG_ARCH_BOARD_PX4FMU_V1
 	// see if we have new PPM input data
 	if (ppm_last_valid_decode != rc_in.timestamp) {
-	// we have a new PPM frame. Publish it.
-	rc_in.channel_count = ppm_decoded_channels;
-	if (rc_in.channel_count > RC_INPUT_MAX_CHANNELS) {
-	rc_in.channel_count = RC_INPUT_MAX_CHANNELS;
-	}
+		// we have a new PPM frame. Publish it.
+		rc_in.channel_count = ppm_decoded_channels;
+		if (rc_in.channel_count > RC_INPUT_MAX_CHANNELS) {
+			rc_in.channel_count = RC_INPUT_MAX_CHANNELS;
+			}
+		for (uint8_t i=0; i<rc_in.channel_count; i++) {
+			rc_in.values[i] = ppm_buffer[i];
+			}
+		rc_in.timestamp = ppm_last_valid_decode;
+		}
+	#endif
+
+	#ifdef CONFIG_ARCH_BOARD_NAVSTIK_V1
+	rc_in.timestamp = hrt_absolute_time();
+	rc_in.channel_count = PWM_INPUT_CHANNELS ;
 	for (uint8_t i=0; i<rc_in.channel_count; i++) {
-	rc_in.values[i] = ppm_buffer[i];
-	}
-	rc_in.timestamp = ppm_last_valid_decode;
+		rc_in.values[i] = rc_buffer[i];
+		}
+	#endif
 
 	/* lazily advertise on first publication */
 	if (to_input_rc == 0) {
@@ -562,8 +577,7 @@
 	} else {
 	orb_publish(ORB_ID(input_rc), to_input_rc, &rc_in);
 	}
-	}
-	}
+	}	
 
 	::close(_t_actuators);
 	::close(_t_actuators_effective);
@@ -609,9 +623,9 @@
 
 	/* if we are in valid PWM mode, try it as a PWM ioctl as well */
 	switch (_mode) {
-	case MODE_2PWM: printf ("Mode 2") ;
-	case MODE_4PWM: printf ("Mode 4") ;
-	case MODE_6PWM: printf ("Mode 6") ;
+	case MODE_2PWM: 
+	case MODE_4PWM: 
+	case MODE_6PWM: 
 	ret = pwm_ioctl(filp, cmd, arg);
 	break;
 
