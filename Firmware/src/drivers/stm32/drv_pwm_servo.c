@@ -168,6 +168,11 @@ pwm_channel_init(unsigned channel)
 		rCCR4(timer) = pwm_channels[channel].default_value;
 		rCCER(timer) |= GTIM_CCER_CC4E;
 		break;
+	case 5:
+		rCCMR1(timer) |= (GTIM_CCMR_MODE_PWM1 << GTIM_CCMR1_OC2M_SHIFT) | GTIM_CCMR1_OC2PE;
+		rCCR2(timer) = pwm_channels[channel].default_value;
+		rCCER(timer) |= GTIM_CCER_CC2NE;
+		break;
 	}
 }
 
@@ -203,6 +208,10 @@ up_pwm_servo_set(unsigned channel, servo_position_t value)
 
 	case 4:
 		rCCR4(timer) = value;
+		break;
+
+	case 5:
+		rCCR2(timer) = value;
 		break;
 
 	default:
@@ -242,6 +251,10 @@ up_pwm_servo_get(unsigned channel)
 
 	case 4:
 		value = rCCR4(timer);
+		break;
+
+	case 5:
+		value = rCCR2(timer);
 		break;
 	}
 

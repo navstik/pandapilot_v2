@@ -48,10 +48,10 @@
  * The mapping are as follows :
  * PB5	Servo 1 Timer 3 Channel 2 (AF2)
  * PA10	Servo 2 Timer 1 channel 3 (AF1)
- * PC8	Servo 3 Timer 8 Channel 3 (AF3)
+ * PC8	Servo 3 Timer 3 Channel 3 (AF2)
  * PB11	Servo 4 Timer 2 Channel 4 (AF1)
  * PB1	Servo 5 Timer 3 Channel 4 (AF2)
- * PB0	Servo 6 Timer 3 Channel 3 (AF2)
+ * //PB0	Servo 6 Timer 3 Channel 3 (AF2)
  *
  */
 

@@ -65,7 +65,7 @@
 
 /* PWM Input 
  * RC1 PA7	Timer 14 Channel 1 (AF9)
- * RC2 PA6	Timer 3 Channel 1 (AF2)
+ * RC2 PA6	Timer 13 Channel 1 (AF9)
  * RC3 PB14 	Timer 12 Channel 1 (AF9)
  * RC4 PB15	Timer 12 Channel 2 (AF9)
  * RC5 PC7	Timer 8 Channel 2 (AF3)
@@ -104,7 +104,7 @@ __EXPORT volatile uint16_t rc_buffer[RC_MAX_CHANNELS];
 #define MAX_PULSEWIDTH 2000
 
 #define RC1  GPIO_TIM14_CH1IN
-#define RC2  GPIO_TIM3_CH1IN		
+#define RC2  GPIO_TIM13_CH1IN		
 #define RC3  GPIO_TIM12_CH1IN
 #define RC4  GPIO_TIM12_CH2IN	
 #define RC5  GPIO_TIM8_CH1IN		
@@ -185,7 +185,7 @@ static int set_timer(unsigned timer)
 	ArCCER(timer) |= 0;
 	ArDCR(timer) |= 0;
 	/* configure the timer to free-run at 1MHz */
-	//ArPSC(timer) = (input_timers[timer].clock_freq / 1000000) - 1;
+	ArPSC(timer) = (input_timers[timer].clock_freq / 1000000) - 1;
 	if (timer == 2)
 		ArBDTR(timer) |= 0;
 	/* run the full span of the counter */
@@ -226,7 +226,7 @@ static int set_timer(unsigned timer)
 	rDIER(timer) |= (GTIM_DIER_CC1IE|GTIM_DIER_CC2IE);
 	break;
 	
-	case 2://timer 3 - channel 1
+	case 2://timer 13 - channel 1
 	
 	rCCMR1(timer) |= ((GTIM_CCMR_CCS_CCIN1<<GTIM_CCMR1_CC1S_SHIFT)|(GTIM_CCMR_ICF_FCKINT8<<GTIM_CCMR1_IC1F_SHIFT));
 	rCCMR2(timer) |= 0;

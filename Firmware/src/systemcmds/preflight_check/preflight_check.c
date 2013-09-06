@@ -245,6 +245,7 @@ system_eval:
 	
 	if (system_ok) {
 		/* all good, exit silently */
+		warnx("\nPRE-FLIGHT CHECK SUCCESSFUL");
 		exit(0);
 	} else {
 		fflush(stdout);

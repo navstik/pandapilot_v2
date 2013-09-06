@@ -55,7 +55,7 @@ fi
 # MAV_TYPE     1 = fixed wing, 2 = quadrotor, 13 = hexarotor
 #              see https://pixhawk.ethz.ch/mavlink/
 #
-param set MAV_TYPE 1
+param set MAV_TYPE 2
  
 #
 # Start MAVLink
@@ -86,7 +86,7 @@ attitude_estimator_ekf start
 echo "[init] starting PWM output"
 fmu mode_pwm
 mixer load /dev/pwm_output /etc/mixers/FMU_quad_x.mix
-pwm -u 400 -m 0xff
+#pwm -u 400 -m 0xff
  
 #
 # Start attitude control

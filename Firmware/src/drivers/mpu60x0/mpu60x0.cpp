@@ -138,6 +138,7 @@
 // Product ID Description for MPU6000
 // high 4 bits 	low 4 bits
 // Product Name	Product Revision
+#define MPU6000ES_REV_C1		0x04
 #define MPU6000ES_REV_C4		0x14
 #define MPU6000ES_REV_C5		0x15
 #define MPU6000ES_REV_D6		0x16
@@ -151,6 +152,7 @@
 #define MPU6000_REV_D9			0x59
 #define MPU6000_REV_D10			0x5A
 #define MPU6000_REV_D11			0x28
+
 
 class MPU60x0_gyro;
 
@@ -406,6 +408,7 @@ MPU60x0::init()
 
 	// product-specific scaling
 	switch (_product) {
+	case MPU6000ES_REV_C1:	
 	case MPU6000ES_REV_C4:
 	case MPU6000ES_REV_C5:
 	case MPU6000_REV_C4:
@@ -473,6 +476,7 @@ MPU60x0::probe()
 
 	// verify product revision
 	switch (_product) {
+	case MPU6000ES_REV_C1:
 	case MPU6000ES_REV_C4:
 	case MPU6000ES_REV_C5:
 	case MPU6000_REV_C4:
@@ -486,7 +490,7 @@ MPU60x0::probe()
 	case MPU6000_REV_D9:
 	case MPU6000_REV_D10:
 	case MPU6000_REV_D11:
-		debug("ID 0x%02x", _product);
+			debug("ID 0x%02x", _product);
 		return OK;
 	}
 

@@ -228,34 +228,34 @@
  * The mapping are as follows :
  * PB5	Servo 1 Timer 3 Channel 2 (AF2)
  * PA10	Servo 2 Timer 1 channel 3 (AF1)
- * PC8	Servo 3 Timer 8 Channel 3 (AF3)
+ * PC8	Servo 3 Timer 3 Channel 3 (AF2)
  * PB11	Servo 4 Timer 2 Channel 4 (AF1)
  * PB1	Servo 5 Timer 3 Channel 4 (AF2)
- * PB0	Servo 6 Timer 3 Channel 3 (AF2)
+ * PB0	Servo 6 Timer 1 Channel 2 (AF1)
  *
  */
 
 
 #define GPIO_TIM3_CH2OUT	GPIO_TIM3_CH2OUT_2
-#define GPIO_TIM1_CH3OUT	GPIO_TIM1_CH3OUT_1		
-#define GPIO_TIM8_CH3OUT	GPIO_TIM8_CH3OUT_1
+#define GPIO_TIM1_CH3OUT	GPIO_TIM1_CH3OUT_1
+#define GPIO_TIM3_CH3OUT	GPIO_TIM3_CH3OUT_2		
 #define GPIO_TIM2_CH4OUT	GPIO_TIM2_CH4OUT_2
 #define GPIO_TIM3_CH4OUT	GPIO_TIM3_CH4OUT_1
-#define GPIO_TIM3_CH3OUT	GPIO_TIM3_CH3OUT_1
+#define GPIO_TIM1_CH2N		GPIO_TIM1_CH2N_1
 
 #ifdef NAVSTIK_CONFIG_PWMIN
 
 /* PWM Input 
  * RC1 PA7	Timer 14 Channel 1 (AF9)
- * RC2 PA6	Timer 3 Channel 1 (AF2)
- * RC3 PB14 Timer 12 Channel 1 (AF9)
+ * RC2 PA6	Timer 13 Channel 1 (AF9)
+ * RC3 PB14 	Timer 12 Channel 1 (AF9)
  * RC4 PB15	Timer 12 Channel 2 (AF9)
  * RC5 PC7	Timer 8 Channel 2 (AF3)
  * RC6 PC6	Timer 8 Channel 1 (AF3)
  */
 
 #define GPIO_TIM14_CH1IN	GPIO_TIM14_CH1IN_1
-#define GPIO_TIM3_CH1IN		GPIO_TIM3_CH1IN_1
+#define GPIO_TIM13_CH1IN	GPIO_TIM13_CH1IN_1
 #define GPIO_TIM12_CH1IN	GPIO_TIM12_CH1IN_2
 #define GPIO_TIM12_CH2IN	GPIO_TIM12_CH2IN_1
 #define GPIO_TIM8_CH2IN		GPIO_TIM8_CH2IN_1

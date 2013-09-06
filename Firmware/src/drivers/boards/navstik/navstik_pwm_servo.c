@@ -56,10 +56,10 @@
  * The mapping are as follows :
  * PB5	Servo 1 Timer 3 Channel 2 (AF2)
  * PA10	Servo 2 Timer 1 channel 3 (AF1)
- * PC8	Servo 3 Timer 8 Channel 3 (AF3)
+ * PC8	Servo 3 Timer 3 Channel 3 (AF2)
  * PB11	Servo 4 Timer 2 Channel 4 (AF1)
  * PB1	Servo 5 Timer 3 Channel 4 (AF2)
- * PB0	Servo 6 Timer 3 Channel 3 (AF2)
+ * PB0	Servo 6 Timer 1 Channel 2 (AF1)
  *
  */
 
@@ -83,10 +83,10 @@ __EXPORT const struct pwm_servo_timer pwm_timers[PWM_SERVO_MAX_TIMERS] = {
 		.clock_freq = STM32_APB1_TIM3_CLKIN
 	},
 	{	/* Timer 8 */
-		.base = STM32_TIM8_BASE,
-		.clock_register = STM32_RCC_APB2ENR,
-		.clock_bit = RCC_APB2ENR_TIM8EN,
-		.clock_freq = STM32_APB2_TIM8_CLKIN
+		.base = 0,
+		.clock_register = 0,
+		.clock_bit = 0,
+		.clock_freq = 0
 	}
 };
 
@@ -103,11 +103,12 @@ __EXPORT const struct pwm_servo_channel pwm_channels[PWM_SERVO_MAX_CHANNELS] = {
 		.timer_channel = 3,
 		.default_value = 1000,
 	},
-	{
-		.gpio = GPIO_TIM8_CH3OUT,
-		.timer_index = 3,
+	{	
+		.gpio = GPIO_TIM3_CH3OUT,
+		.timer_index = 2,
 		.timer_channel = 3,
 		.default_value = 1000,
+		
 	},
 	{
 		.gpio = GPIO_TIM2_CH4OUT,
@@ -121,10 +122,10 @@ __EXPORT const struct pwm_servo_channel pwm_channels[PWM_SERVO_MAX_CHANNELS] = {
 		.timer_channel = 4,
 		.default_value = 1000,
 	},
-	{
-		.gpio = GPIO_TIM3_CH3OUT,
-		.timer_index = 2,
-		.timer_channel = 3,
+	{	
+		.gpio = GPIO_TIM1_CH2N,
+		.timer_index = 0,
+		.timer_channel = 5,
 		.default_value = 1000,
 	}
 };
