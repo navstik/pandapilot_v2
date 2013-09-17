@@ -15,13 +15,14 @@ then
 	echo "uORB started"
 fi
 
-ms5611 start
+#ms5611 start
 adc start
 
-if mpu6000 start
+if mpu60x0 start
 then
 	echo "using MPU6000 and HMC5883L"
 	hmc5883 start
+	bmp180 start
 else
 	echo "using L3GD20 and LSM303D"
 	l3gd20 start
