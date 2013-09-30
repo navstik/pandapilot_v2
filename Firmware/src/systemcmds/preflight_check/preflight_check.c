@@ -1,5 +1,6 @@
 /****************************************************************************
  *
+ *   Copyright (C) 2013 NavStik Development Team. All rights reserved. Based on PX4 port.
  *   Copyright (c) 2012, 2013 PX4 Development Team. All rights reserved.
  *   Author: @author Lorenz Meier <lm@inf.ethz.ch>
  *
