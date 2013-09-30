@@ -51,7 +51,7 @@
  * PC8	Servo 3 Timer 3 Channel 3 (AF2)
  * PB11	Servo 4 Timer 2 Channel 4 (AF1)
  * PB1	Servo 5 Timer 3 Channel 4 (AF2)
- * //PB0	Servo 6 Timer 3 Channel 3 (AF2)
+ * PB0	Servo 6 Timer 1 Channel 2 (AF1)
  *
  */
 
