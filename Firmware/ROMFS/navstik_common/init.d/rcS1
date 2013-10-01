@@ -63,8 +63,6 @@ then
 #
 uorb start
 
-pwm_input &
-
 #
 # Load microSD params
 #
@@ -146,3 +144,5 @@ fi
 
 # End of autostart
 fi
+
+sh /etc/init.d/01_fmu_quad_x
