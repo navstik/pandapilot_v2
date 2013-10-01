@@ -1157,7 +1157,7 @@ Sensors::adc_poll(struct sensor_combined_s &raw)
 		if (ret >= sizeof(buf_adc[0]) && ADC_BATTERY_CURRENT_CHANNEL == buf_adc[i].am_channel) { 
 				/* Voltage in volts */
 				float curr_voltage = (buf_adc[i].am_data * _parameters.battery_voltage_scaling);
-//				printf ("\nVoltage : %.4f",voltage) ;
+//				printf ("\nCurrent_Voltage : %.4f",curr_voltage) ;
 				
 					/* current and discharge are unknown */
 					_battery_status.current_a = curr_voltage * 5000 / 200 / 0.051;
