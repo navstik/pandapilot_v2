@@ -38,3 +38,6 @@ then
 	#
 	preflight_check 
 fi
+
+
+pwm_input

@@ -105,5 +105,3 @@ if blinkm start
 then
 	blinkm systemstate
 fi
-
-pwm_input
