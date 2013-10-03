@@ -86,7 +86,7 @@ attitude_estimator_ekf start
 echo "[init] starting PWM output"
 fmu mode_pwm
 mixer load /dev/pwm_output /etc/mixers/FMU_quad_x.mix
-#pwm -u 400 -m 0xff
+
  
 #
 # Start attitude control
