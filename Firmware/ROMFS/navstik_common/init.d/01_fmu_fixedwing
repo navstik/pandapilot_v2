@@ -76,12 +76,5 @@ fixedwing_att_control start
 #
 sdlog2 start -r 50 -a -b 14
  
-#
-# Start system state
-#
-if blinkm start
-then
-	blinkm systemstate
-fi
-
+pwm_input
 
