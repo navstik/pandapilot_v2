@@ -1,6 +1,5 @@
 ############################################################################
 #
-#   Copyright (c) 2013 Navstik Development Team. All rights reserved.
 #   Copyright (c) 2012, 2013 PX4 Development Team. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -33,12 +32,12 @@
 ############################################################################
 
 #
-# Makefile to build the MPU60x0 driver.
+# Makefile to build the MPU6000 driver.
 #
 
-MODULE_COMMAND	= mpu60x0
+MODULE_COMMAND	= mpu6050
 
 # XXX seems excessive, check if 2048 is not sufficient
-MODULE_STACKSIZE	= 4096
+MODULE_STACKSIZE	 = 4096
 
-SRCS		= mpu60x0.cpp
+SRCS		= mpu6050.cpp
