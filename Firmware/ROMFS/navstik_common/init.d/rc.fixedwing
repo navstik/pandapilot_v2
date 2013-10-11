@@ -45,6 +45,7 @@ usleep 5000
 # Start the sensors and test them.
 #
 sh /etc/init.d/rc.sensors
+meas_airspeed start
  
 #
 # Start the commander.
@@ -70,6 +71,7 @@ mixer load /dev/pwm_output /etc/mixers/FMU_AET.mix
 # Start attitude control
 #
 fixedwing_att_control start
+fixedwing_pos_control start
 
 #
 # Start logging
@@ -77,4 +79,3 @@ fixedwing_att_control start
 sdlog2 start -r 50 -a -b 14
  
 pwm_input
-

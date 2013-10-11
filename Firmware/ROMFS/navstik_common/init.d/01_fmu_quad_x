@@ -92,6 +92,7 @@ mixer load /dev/pwm_output /etc/mixers/FMU_quad_x.mix
 # Start attitude control
 #
 multirotor_att_control start
+multirotor_pos_control start
 
 #
 # Start logging

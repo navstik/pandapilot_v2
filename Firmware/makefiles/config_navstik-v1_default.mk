@@ -23,7 +23,7 @@ MODULES		+= drivers/boards/navstik
 # MODULES		+= drivers/bma180
 
 MODULES		+= drivers/bmp180
-MODULES		+= drivers/mpu60x0
+MODULES		+= drivers/mpu6050
 MODULES		+= drivers/hmc5883
 # MODULES		+= drivers/ms5611
 # MODULES		+= drivers/mb12xx
