@@ -844,9 +844,9 @@ HMC5883::collect()
 #ifdef NAVSTIK_I2C_BUS_SENSORS
 	if (_bus == NAVSTIK_I2C_BUS_SENSORS) {
 		/* to align the sensor axes with the board, x and y need to be flipped */
-		_reports[_next_report].x = ((report.y * _range_scale) - _scale.x_offset) * _scale.x_scale;
+		_reports[_next_report].x = ((((report.x == -32768) ? 32767 : -report.x) * _range_scale) - _scale.x_offset) * _scale.x_scale;
 		/* flip axes and negate value for y */
-		_reports[_next_report].y = ((((report.x == -32768) ? 32767 : -report.x) * _range_scale) - _scale.y_offset) * _scale.y_scale;
+		_reports[_next_report].y = ((((report.y == -32768) ? 32767 : -report.y) * _range_scale) - _scale.y_offset) * _scale.y_scale;
 		/* z remains z */
 		_reports[_next_report].z = ((report.z * _range_scale) - _scale.z_offset) * _scale.z_scale;
 	} else {
