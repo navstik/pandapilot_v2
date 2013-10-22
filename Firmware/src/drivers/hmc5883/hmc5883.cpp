@@ -816,12 +816,12 @@ HMC5883::collect()
 	/*
 	 * RAW outputs
 	 *
-	 * to align the sensor axes with the board, x and y need to be flipped
-	 * and y needs to be negated
+	 * to align the sensor axes with the board,negate x and y
 	 */
-	_reports[_next_report].x_raw = report.y;
-	_reports[_next_report].y_raw = ((report.x == -32768) ? 32767 : -report.x);
-	/* z remains z */
+	_reports[_next_report].x_raw = ((report.x == -32768) ? 32767 : -report.x);
+	
+	_reports[_next_report].y_raw =((report.y == -32768) ? 32767 : -report.y);
+	/* z remains z */ 
 	_reports[_next_report].z_raw = report.z;
 
 	/* scale values for output */
