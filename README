@@ -1,11 +1,11 @@
 Pandapilot_v2
-1. Go to the pandapilot_v2 directory and undergo below commands
+1. Go to the pandapilot_v2 directory and execute following commands
 2.~/pandapilot_v2/Firmware$ make clean
 3.~/pandapilot_v2/Firmware$ make distclean
 4.~/pandapilot_v2/Firmware$ make archives
 5.~/pandapilot_v2/Firmware$ make all
 
-After doing this on Terminal, The last lines of compilation output are as below:
+After this is done, the last few lines of compilation output should look like this:
 
 ROMFS: romfs.img
 OBJ: romfs.o
